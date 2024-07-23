@@ -18,4 +18,9 @@ class CategoryRepository implements CategoryRepositoryInterface
     {
         return $this->model->with('books.authors')->get();
     }
+
+    public function create(array $data): Category
+    {
+        return $this->model->create($data);
+    }
 }

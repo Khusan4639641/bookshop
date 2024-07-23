@@ -1,12 +1,16 @@
 <?php
 
 use App\Services\{CategoryService, BookService, AuthorService};
+use Illuminate\Support\Facades\Artisan;
 
 require __DIR__.'/vendor/autoload.php';
 
 $app = require_once __DIR__.'/bootstrap/app.php';
 $kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
 $kernel->bootstrap();
+
+// Выполнение миграций
+Artisan::call('migrate', ['--force' => true]);
 
 $categoryService = $app->make(CategoryService::class);
 $bookService = $app->make(BookService::class);

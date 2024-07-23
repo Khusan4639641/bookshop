@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Category;
 use App\Repositories\Interfaces\CategoryRepositoryInterface;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -17,5 +18,10 @@ class CategoryService
     public function getAllCategoriesWithBooks(): Collection
     {
         return $this->categoryRepository->all();
+    }
+
+    public function createCategory(array $data): Category
+    {
+        return $this->categoryRepository->create($data);
     }
 }
