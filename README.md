@@ -1,3 +1,5 @@
-docker-compose up -d
-docker exec -it bookshop_app bash
-php install.php
+### Instruction:
+
+docker-compose up -d \n
+docker exec -it bookshop_app bash \n
+php install.php \n
