@@ -1,0 +1,12 @@
+# Используем базовый образ MySQL
+FROM mysql:5.7
+
+# Устанавливаем переменные окружения для MySQL
+ENV MYSQL_ROOT_PASSWORD=root
+ENV MYSQL_DATABASE=bookshop
+
+# Копируем скрипты для инициализации базы данных (если необходимо)
+# COPY ./init.sql /docker-entrypoint-initdb.d/
+
+# Открываем порт для MySQL
+EXPOSE 3306

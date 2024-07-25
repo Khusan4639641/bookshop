@@ -7,6 +7,7 @@ services:
         container_name: bookshop_app
         ports:
             - "80:80"
+            - "3307:3306" # Маппируем порт 3306 контейнера на порт 3307 хоста
         volumes:
             - .:/var/www/html/bookshop
         depends_on:
@@ -18,19 +19,29 @@ services:
             DB_DATABASE: bookshop
             DB_USERNAME: root
             DB_PASSWORD: root
+        command: ["sh", "-c", "chmod +x /var/www/html/bookshop/wait-for-it.sh && /var/www/html/bookshop/wait-for-it.sh db:3306 -- sleep 10 && service apache2 start && /usr/sbin/sshd -D"]
+        networks:
+            - bookshop_network
 
     db:
-        image: mysql:5.7
+        build:
+            context: .
+            dockerfile: Dockerfile.db
         container_name: bookshop_db
         ports:
             - "3306:3306"
         environment:
             MYSQL_ROOT_PASSWORD: root
             MYSQL_DATABASE: bookshop
-            MYSQL_USER: root
-            MYSQL_PASSWORD: root
         volumes:
             - db_data:/var/lib/mysql
+            - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+        networks:
+            - bookshop_network
+
+networks:
+    bookshop_network:
+        driver: bridge
 
 volumes:
     db_data:

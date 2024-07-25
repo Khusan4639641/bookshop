@@ -12,7 +12,8 @@ RUN apt-get update && apt-get install -y \
     mc \
     openssh-server \
     curl \
-    unzip
+    unzip \
+    mysql-server
 
 # Устанавливаем Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
@@ -34,12 +35,15 @@ RUN useradd -m admin && echo "admin:trust" | chpasswd && mkdir /var/run/sshd
 WORKDIR /var/www/html/bookshop
 RUN composer install --no-interaction --no-plugins --no-scripts
 
+# Копируем инициализационные скрипты MySQL
+COPY docker-entrypoint-initdb.d /docker-entrypoint-initdb.d
+
 # Устанавливаем права доступа
 RUN chown -R www-data:www-data /var/www/html/bookshop/storage /var/www/html/bookshop/bootstrap/cache
 RUN chmod -R 775 /var/www/html/bookshop/storage /var/www/html/bookshop/bootstrap/cache
 
-# Открываем порты для Apache и SSH
-EXPOSE 80 22
+# Открываем порты для Apache, SSH и MySQL
+EXPOSE 80 22 3306
 
-# Запускаем Apache и SSH серверы
-CMD sleep 10 && service apache2 start && /usr/sbin/sshd -D
+# Запускаем MySQL, Apache и SSH серверы
+CMD service mysql start && sleep 10 && service apache2 start && /usr/sbin/sshd -D
